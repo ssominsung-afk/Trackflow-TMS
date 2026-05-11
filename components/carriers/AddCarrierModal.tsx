@@ -40,7 +40,7 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
 
     setLoading(true)
     try {
-      await addCarrier({
+      const result = await addCarrier({
         name: formData.name,
         mc_number: formData.mc_number || undefined,
         dot_number: formData.dot_number || undefined,
@@ -50,6 +50,11 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
         insurance_exp: formData.insurance_exp || undefined,
         is_active: formData.is_active
       })
+
+      if (!result.success) {
+        toast.error(result.error || 'Failed to add carrier')
+        return
+      }
 
       toast.success('Carrier added successfully')
       router.refresh()
