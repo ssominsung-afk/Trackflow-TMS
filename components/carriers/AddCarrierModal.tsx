@@ -92,15 +92,17 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
         style={{
           width: '95%',
           maxWidth: 600,
-          maxHeight: 'calc(100vh - 80px)', // Occupy most of the screen
+          height: 'auto', // Allow content to determine height
+          maxHeight: '90vh',
+          minHeight: '400px', // Prevent collapsing
           background: 'var(--bg-surface)',
           padding: 0,
           display: 'flex',
           flexDirection: 'column',
-          boxShadow: '0 30px 80px rgba(0,0,0,0.8)',
+          boxShadow: '0 30px 100px rgba(0,0,0,0.9)',
           border: '1px solid var(--border)',
           overflow: 'hidden',
-          marginTop: 0, // Reset margin
+          borderRadius: 16,
         }}
       >
         {/* Fixed Header */}
