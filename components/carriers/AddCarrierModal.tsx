@@ -78,27 +78,29 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.8)',
-      backdropFilter: 'blur(8px)',
+      background: 'rgba(0, 0, 0, 0.85)',
+      backdropFilter: 'blur(10px)',
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-start', // Changed from center to ensure top is visible
       justifyContent: 'center',
       zIndex: 100,
-      padding: '20px 0',
+      padding: '40px 0', // Added padding
+      overflowY: 'auto', // Allow scrolling the overlay if the screen is tiny
     }}>
       <div 
         className="animate-fade-in card"
         style={{
           width: '95%',
           maxWidth: 600,
-          maxHeight: 'min(800px, 90vh)',
+          maxHeight: 'calc(100vh - 80px)', // Occupy most of the screen
           background: 'var(--bg-surface)',
           padding: 0,
           display: 'flex',
           flexDirection: 'column',
-          boxShadow: '0 25px 70px rgba(0,0,0,0.6)',
+          boxShadow: '0 30px 80px rgba(0,0,0,0.8)',
           border: '1px solid var(--border)',
           overflow: 'hidden',
+          marginTop: 0, // Reset margin
         }}
       >
         {/* Fixed Header */}
@@ -120,8 +122,8 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
               <Building2 size={18} color="var(--accent-blue)" />
             </div>
             <div>
-              <h2 style={{ fontSize: 17, fontWeight: 700 }}>Add New Carrier</h2>
-              <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>Fields with * are required</p>
+              <h2 style={{ fontSize: 17, fontWeight: 700 }}>Add New Carrier <span style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 400 }}>v1.1</span></h2>
+              <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>Please enter the official company name below</p>
             </div>
           </div>
           <button 
@@ -129,7 +131,6 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
             style={{ 
               background: 'var(--bg-hover)', border: 'none', cursor: 'pointer', color: 'var(--text-muted)',
               width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'all 0.2s'
             }}
           >
             <X size={18} />
@@ -149,9 +150,10 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
             <div style={{ gridColumn: 'span 2' }}>
               <label className="label" style={{ color: 'var(--accent-blue)', fontWeight: 600 }}>Carrier Name *</label>
               <input 
+                autoFocus
                 className="input"
-                style={{ border: '1px solid var(--accent-blue-glow)', background: 'var(--bg-card)' }}
-                placeholder="Enter the official company name"
+                style={{ border: '1px solid var(--accent-blue)', background: 'rgba(59, 130, 246, 0.05)' }}
+                placeholder="Required: e.g. Swift Logistics"
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
               />
