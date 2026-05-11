@@ -28,17 +28,21 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
 
   if (!isOpen) return null
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    console.log('Submitting carrier data:', formData)
-    setLoading(true)
+  const scrollRef = useState<HTMLDivElement | null>(null)[1] // Note: Actually I'll use useRef below
 
+  async function handleSubmit(e?: React.FormEvent) {
+    if (e) e.preventDefault()
+    console.log('Submitting carrier data:', formData)
+    
     if (!formData.name) {
       toast.error('Carrier name is required')
-      setLoading(false)
+      // Find the scroll container and scroll to top
+      const container = document.getElementById('modal-scroll-body')
+      if (container) container.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
 
+    setLoading(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
       
@@ -53,13 +57,11 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
           phone: formData.phone || null,
           insurance_exp: formData.insurance_exp || null,
           is_active: formData.is_active,
-          // If we have a company_id in user_metadata or similar, we should use it
           company_id: user?.user_metadata?.company_id || null
         }])
 
       if (error) throw error
 
-      console.log('Carrier added successfully')
       toast.success('Carrier added successfully')
       router.refresh()
       onClose()
@@ -78,28 +80,30 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.7)',
-      backdropFilter: 'blur(4px)',
+      background: 'rgba(0, 0, 0, 0.8)',
+      backdropFilter: 'blur(8px)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 100,
-      padding: 20,
+      padding: '20px 0',
     }}>
       <div 
         className="animate-fade-in card"
         style={{
-          width: '100%',
+          width: '95%',
           maxWidth: 600,
-          maxHeight: '90vh',
+          maxHeight: 'min(800px, 90vh)',
           background: 'var(--bg-surface)',
           padding: 0,
-          overflowY: 'auto',
-          boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
-          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          boxShadow: '0 25px 70px rgba(0,0,0,0.6)',
+          border: '1px solid var(--border)',
+          overflow: 'hidden',
         }}
       >
-        {/* Header */}
+        {/* Fixed Header */}
         <div style={{
           padding: '20px 24px',
           borderBottom: '1px solid var(--border)',
@@ -107,6 +111,7 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
           alignItems: 'center',
           justifyContent: 'space-between',
           background: 'var(--bg-card)',
+          flexShrink: 0,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{
@@ -116,26 +121,39 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
             }}>
               <Building2 size={18} color="var(--accent-blue)" />
             </div>
-            <h2 style={{ fontSize: 18, fontWeight: 700 }}>Add New Carrier</h2>
+            <div>
+              <h2 style={{ fontSize: 17, fontWeight: 700 }}>Add New Carrier</h2>
+              <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>Fields with * are required</p>
+            </div>
           </div>
           <button 
             onClick={onClose}
             style={{ 
-              background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)'
+              background: 'var(--bg-hover)', border: 'none', cursor: 'pointer', color: 'var(--text-muted)',
+              width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transition: 'all 0.2s'
             }}
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
-        {/* Form */}
-        <div style={{ padding: 24 }}>
+        {/* Scrollable Body */}
+        <div 
+          id="modal-scroll-body"
+          style={{ 
+            padding: '24px 24px 32px 24px', 
+            overflowY: 'auto',
+            flex: 1,
+          }}
+        >
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
             <div style={{ gridColumn: 'span 2' }}>
-              <label className="label">Carrier Name *</label>
+              <label className="label" style={{ color: 'var(--accent-blue)', fontWeight: 600 }}>Carrier Name *</label>
               <input 
                 className="input"
-                placeholder="e.g. Swift Logistics"
+                style={{ border: '1px solid var(--accent-blue-glow)', background: 'var(--bg-card)' }}
+                placeholder="Enter the official company name"
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
               />
@@ -160,17 +178,25 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
               />
             </div>
 
-            <div style={{ gridColumn: 'span 2', marginTop: 8 }}>
-              <h4 style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <User size={12} /> Contact Information
-              </h4>
+            <div style={{ gridColumn: 'span 2', marginTop: 12 }}>
+              <div style={{ 
+                padding: '12px 16px', 
+                background: 'var(--bg-hover)', 
+                borderRadius: 8, 
+                border: '1px solid var(--border)',
+                marginBottom: 16
+              }}>
+                <h4 style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <User size={13} /> Contact Details
+                </h4>
+              </div>
             </div>
 
             <div>
               <label className="label">Contact Name</label>
               <input 
                 className="input"
-                placeholder="Name"
+                placeholder="Primary contact"
                 value={formData.contact}
                 onChange={e => setFormData({ ...formData, contact: e.target.value })}
               />
@@ -195,10 +221,18 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
               />
             </div>
 
-            <div style={{ gridColumn: 'span 2', marginTop: 8 }}>
-              <h4 style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <ShieldAlert size={12} /> Compliance & Status
-              </h4>
+            <div style={{ gridColumn: 'span 2', marginTop: 12 }}>
+              <div style={{ 
+                padding: '12px 16px', 
+                background: 'var(--bg-hover)', 
+                borderRadius: 8, 
+                border: '1px solid var(--border)',
+                marginBottom: 16
+              }}>
+                <h4 style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <ShieldAlert size={13} /> Compliance & Compliance
+                </h4>
+              </div>
             </div>
 
             <div>
@@ -217,46 +251,52 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
                 id="is_active"
                 checked={formData.is_active}
                 onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
-                style={{ width: 18, height: 18, accentColor: 'var(--accent-blue)' }}
+                style={{ width: 18, height: 18, accentColor: 'var(--accent-blue)', cursor: 'pointer' }}
                />
                <label htmlFor="is_active" style={{ fontSize: 14, fontWeight: 500, cursor: 'pointer' }}>Active Carrier</label>
             </div>
           </div>
-
-          {/* Footer Actions */}
-          <div style={{ 
-            marginTop: 32, 
-            display: 'flex', 
-            justifyContent: 'flex-end', 
-            gap: 12,
-            borderTop: '1px solid var(--border)',
-            paddingTop: 24,
-          }}>
-            <button 
-              type="button" 
-              className="btn btn-secondary" 
-              onClick={onClose}
-              disabled={loading}
-            >
-              Cancel
-            </button>
-            <button 
-              type="button" 
-              className="btn btn-primary"
-              onClick={handleSubmit}
-              disabled={loading}
-            >
-              {loading ? (
-                <div className="spinner" style={{ width: 14, height: 14 }} />
-              ) : (
-                <>
-                  <Save size={16} />
-                  Add Carrier
-                </>
-              )}
-            </button>
-          </div>
         </div>
+
+        {/* Fixed Footer */}
+        <div style={{ 
+          padding: '20px 24px', 
+          display: 'flex', 
+          justifyContent: 'flex-end', 
+          gap: 12,
+          borderTop: '1px solid var(--border)',
+          background: 'var(--bg-card)',
+          flexShrink: 0,
+        }}>
+          <button 
+            type="button" 
+            className="btn btn-secondary" 
+            onClick={onClose}
+            disabled={loading}
+          >
+            Cancel
+          </button>
+          <button 
+            type="button" 
+            className="btn btn-primary"
+            onClick={() => handleSubmit()}
+            disabled={loading}
+            style={{ minWidth: 140 }}
+          >
+            {loading ? (
+              <div className="spinner" style={{ width: 14, height: 14 }} />
+            ) : (
+              <>
+                <Save size={16} />
+                Add Carrier
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
       </div>
     </div>
   )
