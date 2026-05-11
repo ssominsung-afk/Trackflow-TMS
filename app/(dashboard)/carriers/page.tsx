@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { CheckCircle, AlertTriangle, Building2, User, Phone, Mail } from 'lucide-react'
 import ComplianceScoreCard from '@/components/carriers/ComplianceScoreCard'
 
+import AddCarrierButton from '@/components/carriers/AddCarrierButton'
+
 export default async function CarriersPage() {
   const supabase = await createClient()
 
@@ -19,7 +21,7 @@ export default async function CarriersPage() {
             Manage carrier network and compliance
           </p>
         </div>
-        <button className="btn btn-primary btn-sm">Add Carrier</button>
+        <AddCarrierButton />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20 }}>
