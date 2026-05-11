@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { X, Building2, Save, User, Phone, Mail, ShieldAlert } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+
+import { addCarrier } from '@/app/(dashboard)/carriers/actions'
 
 interface AddCarrierModalProps {
   isOpen: boolean
@@ -13,7 +14,6 @@ interface AddCarrierModalProps {
 
 export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProps) {
   const router = useRouter()
-  const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
@@ -30,11 +30,9 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
 
   async function handleSubmit(e?: React.FormEvent) {
     if (e) e.preventDefault()
-    console.log('Submitting carrier data:', formData)
     
     if (!formData.name) {
       toast.error('Carrier name is required')
-      // Find the scroll container and scroll to top
       const container = document.getElementById('modal-scroll-body')
       if (container) container.scrollTo({ top: 0, behavior: 'smooth' })
       return
@@ -42,23 +40,16 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
 
     setLoading(true)
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      const { error } = await supabase
-        .from('carriers')
-        .insert([{
-          name: formData.name,
-          mc_number: formData.mc_number || null,
-          dot_number: formData.dot_number || null,
-          contact: formData.contact || null,
-          email: formData.email || null,
-          phone: formData.phone || null,
-          insurance_exp: formData.insurance_exp || null,
-          is_active: formData.is_active,
-          company_id: user?.user_metadata?.company_id || null
-        }])
-
-      if (error) throw error
+      await addCarrier({
+        name: formData.name,
+        mc_number: formData.mc_number || undefined,
+        dot_number: formData.dot_number || undefined,
+        contact: formData.contact || undefined,
+        phone: formData.phone || undefined,
+        email: formData.email || undefined,
+        insurance_exp: formData.insurance_exp || undefined,
+        is_active: formData.is_active
+      })
 
       toast.success('Carrier added successfully')
       router.refresh()
