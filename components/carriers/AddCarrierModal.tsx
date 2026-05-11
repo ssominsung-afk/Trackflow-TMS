@@ -28,8 +28,6 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
 
   if (!isOpen) return null
 
-  const scrollRef = useState<HTMLDivElement | null>(null)[1] // Note: Actually I'll use useRef below
-
   async function handleSubmit(e?: React.FormEvent) {
     if (e) e.preventDefault()
     console.log('Submitting carrier data:', formData)
@@ -230,7 +228,7 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
                 marginBottom: 16
               }}>
                 <h4 style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <ShieldAlert size={13} /> Compliance & Compliance
+                  <ShieldAlert size={13} /> Compliance & Status
                 </h4>
               </div>
             </div>
@@ -293,10 +291,6 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
             )}
           </button>
         </div>
-      </div>
-    </div>
-  )
-}
       </div>
     </div>
   )
