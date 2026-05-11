@@ -88,21 +88,20 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
       overflowY: 'auto', // Allow scrolling the overlay if the screen is tiny
     }}>
       <div 
-        className="animate-fade-in card"
+        className="card"
         style={{
           width: '95%',
           maxWidth: 600,
-          height: 'auto', // Allow content to determine height
-          maxHeight: '90vh',
-          minHeight: '400px', // Prevent collapsing
           background: 'var(--bg-surface)',
           padding: 0,
           display: 'flex',
           flexDirection: 'column',
-          boxShadow: '0 30px 100px rgba(0,0,0,0.9)',
+          boxShadow: '0 40px 150px rgba(0,0,0,0.95)',
           border: '1px solid var(--border)',
           overflow: 'hidden',
           borderRadius: 16,
+          position: 'relative',
+          minHeight: '500px', // Force a reasonable height
         }}
       >
         {/* Fixed Header */}

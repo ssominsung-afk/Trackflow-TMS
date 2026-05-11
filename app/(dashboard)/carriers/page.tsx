@@ -13,7 +13,7 @@ export default async function CarriersPage() {
     .order('name')
 
   return (
-    <div className="animate-fade-in">
+    <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
           <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>Carriers</h2>
