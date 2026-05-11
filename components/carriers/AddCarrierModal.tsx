@@ -30,9 +30,18 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    console.log('Submitting carrier data:', formData)
     setLoading(true)
 
+    if (!formData.name) {
+      toast.error('Carrier name is required')
+      setLoading(false)
+      return
+    }
+
     try {
+      const { data: { user } } = await supabase.auth.getUser()
+      
       const { error } = await supabase
         .from('carriers')
         .insert([{
@@ -44,10 +53,13 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
           phone: formData.phone || null,
           insurance_exp: formData.insurance_exp || null,
           is_active: formData.is_active,
+          // If we have a company_id in user_metadata or similar, we should use it
+          company_id: user?.user_metadata?.company_id || null
         }])
 
       if (error) throw error
 
+      console.log('Carrier added successfully')
       toast.success('Carrier added successfully')
       router.refresh()
       onClose()
@@ -79,10 +91,12 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
         style={{
           width: '100%',
           maxWidth: 600,
+          maxHeight: '90vh',
           background: 'var(--bg-surface)',
           padding: 0,
-          overflow: 'hidden',
+          overflowY: 'auto',
           boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+          position: 'relative',
         }}
       >
         {/* Header */}
