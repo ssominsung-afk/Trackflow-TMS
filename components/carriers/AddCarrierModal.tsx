@@ -129,12 +129,11 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} style={{ padding: 24 }}>
+        <div style={{ padding: 24 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
             <div style={{ gridColumn: 'span 2' }}>
               <label className="label">Carrier Name *</label>
               <input 
-                required
                 className="input"
                 placeholder="e.g. Swift Logistics"
                 value={formData.name}
@@ -242,8 +241,9 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
               Cancel
             </button>
             <button 
-              type="submit" 
+              type="button" 
               className="btn btn-primary"
+              onClick={handleSubmit}
               disabled={loading}
             >
               {loading ? (
@@ -256,7 +256,7 @@ export default function AddCarrierModal({ isOpen, onClose }: AddCarrierModalProp
               )}
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   )
