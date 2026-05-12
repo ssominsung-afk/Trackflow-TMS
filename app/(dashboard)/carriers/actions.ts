@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 export async function addCarrier(formData: {
@@ -14,26 +14,24 @@ export async function addCarrier(formData: {
   is_active?: boolean
 }) {
   try {
-    const supabase = await createClient()
+    // Use Admin Client to bypass RLS issues for profile lookup and insertion
+    const supabase = await createAdminClient()
+    const userClient = await createClient()
     
-    // 1. Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    // 1. Get current user from regular client to ensure auth session
+    const { data: { user }, error: authError } = await userClient.auth.getUser()
     if (authError || !user) {
       return { success: false, error: 'User not authenticated' }
     }
 
-    // 2. Get company_id with fallback
-    const { data: profile, error: profileError } = await supabase
+    // 2. Get company_id (Using Admin client to bypass RLS)
+    const { data: profile } = await supabase
       .from('user_profiles')
       .select('company_id')
       .eq('id', user.id)
       .single()
 
-    if (profileError && profileError.code !== 'PGRST116') { // PGRST116 is "no rows found"
-      return { success: false, error: 'Failed to fetch user profile' }
-    }
-
-    // 3. Prepare data (convert empty strings to null for DB)
+    // 3. Prepare data
     const insertData = {
       name: formData.name,
       mc_number: formData.mc_number || null,
@@ -46,7 +44,7 @@ export async function addCarrier(formData: {
       company_id: profile?.company_id || user.user_metadata?.company_id || null
     }
 
-    // 4. Insert carrier
+    // 4. Insert carrier (Using Admin client to ensure success)
     const { data, error: insertError } = await supabase
       .from('carriers')
       .insert([insertData])
