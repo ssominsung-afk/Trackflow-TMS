@@ -8,7 +8,7 @@ interface Props {
 }
 
 export default function LoadStatusBadge({ status, size = 'md', pulse = false }: Props) {
-  const colors = STATUS_COLORS[status] || STATUS_COLORS.available
+  const colors = STATUS_COLORS[status] || STATUS_COLORS.booked
   const label = STATUS_LABELS[status] || 'Unknown'
 
   return (
