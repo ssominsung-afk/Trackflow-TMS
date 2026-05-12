@@ -15,7 +15,8 @@ import {
 
 export default async function SettingsPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: authData } = await supabase.auth.getUser()
+  const user = authData?.user
 
   return (
     <div className="animate-fade-in" style={{ maxWidth: 1000 }}>

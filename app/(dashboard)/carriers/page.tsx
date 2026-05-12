@@ -59,7 +59,7 @@ export default async function CarriersPage() {
                     )}
                   </h3>
                   <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>
-                    MC/DOT: {c.mc_number ?? 'N/A'} • Since {new Date(c.created_at).getFullYear()}
+                    MC/DOT: {c.mc_number ?? 'N/A'} • Since {c.created_at ? new Date(c.created_at).getFullYear() : '—'}
                   </p>
                 </div>
               </div>

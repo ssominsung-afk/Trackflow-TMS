@@ -83,7 +83,7 @@ export default function LoadFormPage({ params }: Props) {
           .from('loads')
           .select('*')
           .eq('id', id)
-          .single()
+          .maybeSingle()
         if (load) {
           setTrackingToken(load.tracking_token ?? '')
           setForm({

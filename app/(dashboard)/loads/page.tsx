@@ -23,6 +23,11 @@ export default async function LoadsPage({
 
   const { data: loads } = await query
   const safeLoads = loads || []
+  
+  // Safe formatting helpers for this page
+  const getCustomerName = (l: any) => l?.customer?.name || '—'
+  const getCarrierName = (l: any) => l?.carrier?.name || '—'
+  const getDriverName = (l: any) => l?.driver?.full_name || '—'
 
   const STATUS_FILTERS = [
     { value: '', label: 'All' },
@@ -99,20 +104,20 @@ export default async function LoadsPage({
                     </Link>
                   </td>
                   <td style={{ color: 'var(--text-secondary)' }}>
-                    {(load as any).customer?.name ?? '—'}
+                    {getCustomerName(load)}
                   </td>
                   <td>
                     <div style={{ fontSize: 13 }}>
-                      {load.pickup_city}, {load.pickup_state}
+                      {load.pickup_city || '—'}, {load.pickup_state || '—'}
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-                      → {load.delivery_city}, {load.delivery_state}
+                      → {load.delivery_city || '—'}, {load.delivery_state || '—'}
                     </div>
                   </td>
                   <td>
-                    <div style={{ fontSize: 13 }}>{(load as any).carrier?.name ?? '—'}</div>
+                    <div style={{ fontSize: 13 }}>{getCarrierName(load)}</div>
                     <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-                      {(load as any).driver?.full_name ?? '—'}
+                      {getDriverName(load)}
                     </div>
                   </td>
                   <td>

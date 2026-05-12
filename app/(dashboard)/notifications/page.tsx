@@ -30,7 +30,8 @@ const NOTIF_COLORS: Record<NotificationType, string> = {
 
 export default async function NotificationsPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: authData } = await supabase.auth.getUser()
+  const user = authData?.user
 
   const { data: notifications } = await supabase
     .from('notifications')
@@ -56,8 +57,11 @@ export default async function NotificationsPage() {
           <form action={async () => {
             'use server'
             const s = await (await import('@/lib/supabase/server')).createClient()
-            const { data: { user: u } } = await s.auth.getUser()
-            await s.from('notifications').update({ is_read: true }).eq('user_id', u!.id).eq('is_read', false)
+            const { data: aData } = await s.auth.getUser()
+            const u = aData?.user
+            if (u) {
+              await s.from('notifications').update({ is_read: true }).eq('user_id', u.id).eq('is_read', false)
+            }
           }}>
             <button type="submit" className="btn btn-secondary btn-sm">
               <CheckCheck size={13} /> Mark all read

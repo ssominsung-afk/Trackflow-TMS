@@ -48,8 +48,8 @@ export default async function LoadDetailPage({ params }: { params: Promise<{ id:
     .limit(1)
     .maybeSingle()
 
-  const trackingUrl = `${process.env.NEXT_PUBLIC_APP_URL}/tracking/${load.tracking_token}`
-  const riskLevel = load.risk_level as keyof typeof RISK_COLORS || 'on_time'
+  const trackingUrl = `${process.env.NEXT_PUBLIC_APP_URL}/tracking/${load.tracking_token || ''}`
+  const riskLevel = (load.risk_level as keyof typeof RISK_COLORS) || 'on_time'
   const riskColor = RISK_COLORS[riskLevel] || RISK_COLORS.on_time
 
   return (
@@ -130,7 +130,7 @@ export default async function LoadDetailPage({ params }: { params: Promise<{ id:
               <div style={{ flex: 1 }}>
                 <div style={{ marginBottom: 20 }}>
                   <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-primary)', marginBottom: 2 }}>
-                    {load.pickup_city}, {load.pickup_state} {load.pickup_zip}
+                    {load.pickup_city || '—'}, {load.pickup_state || '—'} {load.pickup_zip || ''}
                   </div>
                   {load.pickup_name && (
                     <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{load.pickup_name}</div>
@@ -145,7 +145,7 @@ export default async function LoadDetailPage({ params }: { params: Promise<{ id:
                 </div>
                 <div>
                   <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-primary)', marginBottom: 2 }}>
-                    {load.delivery_city}, {load.delivery_state} {load.delivery_zip}
+                    {load.delivery_city || '—'}, {load.delivery_state || '—'} {load.delivery_zip || ''}
                   </div>
                   {load.delivery_name && (
                     <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{load.delivery_name}</div>
@@ -283,12 +283,12 @@ export default async function LoadDetailPage({ params }: { params: Promise<{ id:
               {recentPing ? (
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
-                    {recentPing.city}, {recentPing.state}
+                    {recentPing.city || '—'}, {recentPing.state || '—'}
                   </div>
                   <div style={{ fontSize: 12 }}>
-                    {recentPing.lat.toFixed(4)}, {recentPing.lng.toFixed(4)}
+                    {recentPing.lat?.toFixed(4) || '0.0000'}, {recentPing.lng?.toFixed(4) || '0.0000'}
                   </div>
-                  {recentPing.speed_mph && (
+                  {recentPing.speed_mph != null && (
                     <div style={{ fontSize: 12 }}>{recentPing.speed_mph} mph</div>
                   )}
                 </div>

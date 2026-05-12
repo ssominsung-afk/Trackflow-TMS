@@ -21,7 +21,7 @@ export default async function FullScreenMapPage() {
       .eq('load_id', load.id)
       .order('created_at', { ascending: false })
       .limit(1)
-      .single()
+      .maybeSingle()
     if (ping) pings.push(ping)
   }
 
