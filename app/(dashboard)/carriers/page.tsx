@@ -7,10 +7,22 @@ import AddCarrierButton from '@/components/carriers/AddCarrierButton'
 export default async function CarriersPage() {
   const supabase = await createClient()
 
-  const { data: carriers = [] } = await supabase
+  const { data: carriers, error } = await supabase
     .from('carriers')
     .select('*')
     .order('name')
+
+  if (error) {
+    return (
+      <div style={{ padding: 24, background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #ef4444', borderRadius: 12, color: '#ef4444' }}>
+        <h3 style={{ fontWeight: 700, marginBottom: 8 }}>Database Connection Error</h3>
+        <p style={{ fontSize: 13 }}>{error.message}</p>
+        <p style={{ fontSize: 12, marginTop: 12, color: 'var(--text-secondary)' }}>
+          Tip: Ensure you have run the SQL schema in your Supabase dashboard.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div>
