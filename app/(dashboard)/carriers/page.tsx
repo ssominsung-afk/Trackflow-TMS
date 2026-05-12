@@ -66,13 +66,13 @@ export default async function CarriersPage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 8 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-secondary)' }}>
-                  <User size={14} /> {c.contact_name ?? 'No Contact'}
+                  <User size={14} /> {c.contact ?? 'No Contact'}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-secondary)' }}>
-                  <Phone size={14} /> {c.contact_phone ?? 'N/A'}
+                  <Phone size={14} /> {c.phone ?? 'N/A'}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-secondary)' }}>
-                  <Mail size={14} /> {c.contact_email ?? 'N/A'}
+                  <Mail size={14} /> {c.email ?? 'N/A'}
                 </div>
               </div>
             </div>
