@@ -131,6 +131,7 @@ export default async function DashboardPage() {
               </div>
             ) : (
               exceptionFeed.map(load => {
+                if (!load?.id) return null
                 const riskLevel = load.risk_level as keyof typeof RISK_COLORS || 'on_time'
                 const rc = RISK_COLORS[riskLevel] || RISK_COLORS.on_time
                 return (
@@ -149,10 +150,10 @@ export default async function DashboardPage() {
                     >
                       <div>
                         <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 2 }}>
-                          {load.load_number}
+                          {load.load_number || 'N/A'}
                         </div>
                         <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
-                          {load.pickup_city} → {load.delivery_city}
+                          {load.pickup_city || 'Unknown'} → {load.delivery_city || 'Unknown'}
                         </div>
                       </div>
                       <LoadStatusBadge status={load.status} size="sm" />
@@ -178,38 +179,41 @@ export default async function DashboardPage() {
             </Link>
           </div>
           <div>
-            {recentLoads.map(load => (
-              <Link key={load.id} href={`/loads/${load.id}`}>
-                <div
-                  style={{
-                    padding: '14px 20px',
-                    borderBottom: '1px solid var(--border-subtle)',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    cursor: 'pointer',
-                    transition: 'background 0.1s',
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                >
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 2 }}>
-                      {load.load_number}
-                    </div>
-                    <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
-                      {load.pickup_city}, {load.pickup_state} → {load.delivery_city}, {load.delivery_state}
-                    </div>
-                    {load.delivery_scheduled && (
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-                        ETA: {formatDate(load.delivery_scheduled, 'MMM d, h:mm a')}
+            {recentLoads.map(load => {
+              if (!load?.id) return null
+              return (
+                <Link key={load.id} href={`/loads/${load.id}`}>
+                  <div
+                    style={{
+                      padding: '14px 20px',
+                      borderBottom: '1px solid var(--border-subtle)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      cursor: 'pointer',
+                      transition: 'background 0.1s',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  >
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 2 }}>
+                        {load.load_number || 'N/A'}
                       </div>
-                    )}
+                      <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
+                        {(load.pickup_city || load.pickup_state) ? `${load.pickup_city || ''}, ${load.pickup_state || ''}` : 'Unknown'} → {(load.delivery_city || load.delivery_state) ? `${load.delivery_city || ''}, ${load.delivery_state || ''}` : 'Unknown'}
+                      </div>
+                      {load.delivery_scheduled && (
+                        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
+                          ETA: {formatDate(load.delivery_scheduled, 'MMM d, h:mm a')}
+                        </div>
+                      )}
+                    </div>
+                    <LoadStatusBadge status={load.status} size="sm" />
                   </div>
-                  <LoadStatusBadge status={load.status} size="sm" />
-                </div>
-              </Link>
-            ))}
+                </Link>
+              )
+            })}
           </div>
         </div>
       </div>
