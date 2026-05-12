@@ -12,7 +12,7 @@ export default async function DashboardPage() {
   const supabase = await createClient()
 
   // Fetch loads with relations
-  const { data: loads = [] } = await supabase
+  const { data: loads, error } = await supabase
     .from('loads')
     .select('*, carrier:carriers(name), customer:customers(name), driver:drivers(full_name)')
     .order('created_at', { ascending: false })
