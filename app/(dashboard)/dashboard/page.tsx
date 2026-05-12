@@ -18,6 +18,15 @@ export default async function DashboardPage() {
     .order('created_at', { ascending: false })
     .limit(100)
 
+  if (error) {
+    return (
+      <div style={{ padding: 24, background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #ef4444', borderRadius: 12, color: '#ef4444' }}>
+        <h3 style={{ fontWeight: 700, marginBottom: 8 }}>Database Error</h3>
+        <p style={{ fontSize: 13 }}>{error.message}</p>
+      </div>
+    )
+  }
+
   // Compute stats
   const safeLoads = loads || []
   const activeLoads = safeLoads.filter(l =>
@@ -27,6 +36,7 @@ export default async function DashboardPage() {
   const today = new Date().toDateString()
   const deliveredToday = safeLoads.filter(l =>
     l.status === 'delivered' && l.delivery_actual &&
+    new Date(l.delivery_actual).toString() !== 'Invalid Date' &&
     new Date(l.delivery_actual).toDateString() === today
   ).length
 
@@ -120,7 +130,8 @@ export default async function DashboardPage() {
               </div>
             ) : (
               exceptionFeed.map(load => {
-                const rc = RISK_COLORS[load.risk_level as keyof typeof RISK_COLORS]
+                const riskLevel = load.risk_level as keyof typeof RISK_COLORS || 'on_time'
+                const rc = RISK_COLORS[riskLevel] || RISK_COLORS.on_time
                 return (
                   <Link key={load.id} href={`/loads/${load.id}`}>
                     <div style={{
