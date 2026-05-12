@@ -22,7 +22,7 @@ export default async function LoadDetailPage({ params }: { params: Promise<{ id:
       driver:drivers(full_name, phone)
     `)
     .eq('id', id)
-    .single()
+    .maybeSingle()
 
   if (!load) notFound()
 
@@ -46,10 +46,11 @@ export default async function LoadDetailPage({ params }: { params: Promise<{ id:
     .eq('load_id', id)
     .order('created_at', { ascending: false })
     .limit(1)
-    .single()
+    .maybeSingle()
 
   const trackingUrl = `${process.env.NEXT_PUBLIC_APP_URL}/tracking/${load.tracking_token}`
-  const riskColor = RISK_COLORS[load.risk_level as keyof typeof RISK_COLORS]
+  const riskLevel = load.risk_level as keyof typeof RISK_COLORS || 'on_time'
+  const riskColor = RISK_COLORS[riskLevel] || RISK_COLORS.on_time
 
   return (
     <div className="animate-fade-in">
