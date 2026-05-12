@@ -29,19 +29,20 @@ export default async function DashboardPage() {
 
   // Compute stats
   const safeLoads = loads || []
+  
   const activeLoads = safeLoads.filter(l =>
-    ['dispatched','at_pickup','loaded','in_transit','at_delivery'].includes(l.status)
+    l?.status && ['dispatched','at_pickup','loaded','in_transit','at_delivery'].includes(l.status)
   ).length
 
   const today = new Date().toDateString()
   const deliveredToday = safeLoads.filter(l =>
-    l.status === 'delivered' && l.delivery_actual &&
+    l?.status === 'delivered' && l.delivery_actual &&
     new Date(l.delivery_actual).toString() !== 'Invalid Date' &&
     new Date(l.delivery_actual).toDateString() === today
   ).length
 
-  const lateRiskLoads = safeLoads.filter(l => l.risk_level === 'late').length
-  const atRiskLoads = safeLoads.filter(l => l.risk_level === 'at_risk').length
+  const lateRiskLoads = safeLoads.filter(l => l?.risk_level === 'late').length
+  const atRiskLoads = safeLoads.filter(l => l?.risk_level === 'at_risk').length
 
   const podMissing = safeLoads.filter(l =>
     l.status === 'delivered' && !['pod_uploaded','completed'].includes(l.status)

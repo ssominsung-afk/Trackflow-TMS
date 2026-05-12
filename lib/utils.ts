@@ -9,12 +9,16 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatDate(date: string | null | undefined, fmt = 'MMM d, yyyy h:mm a') {
   if (!date) return '—'
-  return format(new Date(date), fmt)
+  const d = new Date(date)
+  if (isNaN(d.getTime())) return '—'
+  return format(d, fmt)
 }
 
 export function timeAgo(date: string | null | undefined) {
   if (!date) return '—'
-  return formatDistanceToNow(new Date(date), { addSuffix: true })
+  const d = new Date(date)
+  if (isNaN(d.getTime())) return '—'
+  return formatDistanceToNow(d, { addSuffix: true })
 }
 
 export function formatCurrency(amount: number | null | undefined) {
